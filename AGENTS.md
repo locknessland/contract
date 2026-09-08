@@ -27,12 +27,12 @@ it.
 
 <!-- generated:deps -->
 
-| Direction                                      | Packages                                                                                                                                                        |
-| :--------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Imports (static)                               | `hono` _(type-only)_                                                                                                                                            |
-| Imports (soft, via `tryImportOptionalPackage`) | —                                                                                                                                                               |
-| Imported by                                    | `auth`, `cache`, `cli`, `container`, `core`, `openapi`                                                                                                          |
-| **Must never import**                          | `auth`, `auth-provider`, `cache`, `cli`, `container`, `core`, `drizzle`, `init`, `openapi` — each already reaches this package, so importing one closes a cycle |
+| Direction                                      | Packages                                                                                                                                                                                                                                                                                                               |
+| :--------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Imports (static)                               | `hono` _(type-only)_                                                                                                                                                                                                                                                                                                   |
+| Imports (soft, via `tryImportOptionalPackage`) | —                                                                                                                                                                                                                                                                                                                      |
+| Imported by                                    | `auth`, `cache`, `cli`, `container`, `core`, `crypto`, `devtools`, `drizzle`, `events`, `logger`, `notification`, `openapi`, `queue`, `realtime`, `redis`, `session`, `socialite`, `sse`, `telemetry`                                                                                                                  |
+| **Must never import**                          | `auth`, `auth-provider`, `cache`, `cli`, `container`, `core`, `crypto`, `devtools`, `drizzle`, `events`, `init`, `logger`, `mail`, `notification`, `openapi`, `queue`, `realtime`, `redis`, `session`, `socialite`, `sse`, `telemetry`, `testing` — each already reaches this package, so importing one closes a cycle |
 
 Enforced by `deno task deps:analyze` against `deps.policy.jsonc`. A soft edge is
 deliberately **not** declared in this package's `deno.json`: the consuming
@@ -44,12 +44,13 @@ application installs it, or the feature stays off.
 
 <!-- generated:surface -->
 
-| Kind      | Exports                                                                                                                                                                                                                                                                                                                              |
-| :-------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| function  | `Cache`, `CacheKey`, `CacheTTL`, `ComposeMiddleware`, `Controller`, `DeclareMiddleware`, `Middleware`, `Throttle`, `ThrottleApi`, `ThrottleHeavy`, `ThrottleLogin`, `ThrottleSensitive`, `Use`, `UseMiddleware`, `compose`, `composeMiddleware`, `generateRoutesContent`, `generateRoutesFile`, `parseTimeWindow`, `scanControllers` |
-| interface | `CacheContract`, `CacheOptions`, `ContainerContract`, `ControllerInfo`, `ControllerMetadata`, `ControllerWithMetadata`, `GenerateRoutesResult`, `MiddlewareContract`, `Route`, `RouteMetadata`, `RouteOptions`, `ThrottleConfig`, `ThrottleOptions`, `ThrottleStoreContract`                                                         |
-| typeAlias | `ComposableMiddleware`, `Constructor`, `Context`, `ControllerClass`, `FileExtension`, `MiddlewareClass`, `MiddlewareHandler`, `MiddlewareInput`, `MiddlewareRegistry`, `Next`, `ServiceToken`, `ThrottleKey`, `TimeWindow`, `ValidationTargets`                                                                                      |
-| variable  | `CacheServiceToken`, `Delete`, `Get`, `MIDDLEWARE_NAME_KEY`, `Patch`, `Post`, `Put`, `declaredMiddlewares`                                                                                                                                                                                                                           |
+| Kind      | Exports                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| :-------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| class     | `KeyMaterialError`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| function  | `Cache`, `CacheKey`, `CacheTTL`, `ComposeMiddleware`, `Controller`, `DeclareMiddleware`, `Middleware`, `Static`, `Throttle`, `ThrottleApi`, `ThrottleHeavy`, `ThrottleLogin`, `ThrottleSensitive`, `Use`, `UseMiddleware`, `clampPage`, `clampPerPage`, `compose`, `composeMiddleware`, `decodeBase64`, `deregisterDisposable`, `deregisterHealthCheck`, `deriveJsonSchema`, `disposableCount`, `encodeBase64`, `generateAppKey`, `generateRoutesContent`, `generateRoutesFile`, `healthCheckCount`, `isDevelopment`, `isExplicitlyDevelopment`, `isProduction`, `paginateCursor`, `paginateOffset`, `parseTimeWindow`, `readPaginationParams`, `registerDisposable`, `registerHealthCheck`, `renderError`, `resolveEnvName`, `resolveKeyMaterial`, `safeForLog`, `scanControllers`, `toPaginationProps` |
+| interface | `CacheContract`, `CacheOptions`, `ContainerContract`, `ContainerRegistration`, `ControllerInfo`, `ControllerMetadata`, `ControllerWithMetadata`, `CursorEnvelope`, `CursorLinks`, `CursorMeta`, `Disposable`, `DisposableHandle`, `GenerateRoutesResult`, `HealthCheck`, `HealthCheckHandle`, `HealthResult`, `JsonSchema`, `MiddlewareContract`, `OffsetEnvelope`, `OffsetLinks`, `OffsetMeta`, `PaginationComponentProps`, `PaginationParams`, `RenderErrorOptions`, `ResourceSchema`, `Route`, `RouteMetadata`, `RouteOptions`, `StaticOptions`, `ThrottleConfig`, `ThrottleOptions`, `ThrottleStoreContract`                                                                                                                                                                                         |
+| typeAlias | `ComposableMiddleware`, `Constructor`, `Context`, `ControllerClass`, `FileExtension`, `KeyRejection`, `MiddlewareClass`, `MiddlewareHandler`, `MiddlewareInput`, `MiddlewareRegistry`, `Next`, `PaginationEnvelope`, `PaginationMeta`, `QuerySource`, `ServiceToken`, `ThrottleKey`, `TimeWindow`, `ValidationTargets`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| variable  | `CacheServiceToken`, `DEFAULT_CURSOR_PARAM`, `DEFAULT_PAGE_PARAM`, `DEFAULT_PER_PAGE`, `Delete`, `Get`, `KEY_BYTES`, `KEY_PREFIX`, `MAX_PER_PAGE`, `MIDDLEWARE_NAME_KEY`, `Patch`, `Post`, `Put`, `REJECTED_KEYS`, `declaredMiddlewares`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 
 Anything not listed is internal and free to change.
 
@@ -76,9 +77,25 @@ Anything not listed is internal and free to change.
 
 <!-- generated:tests -->
 
-**This package has no tests.** 8 source files ship untested — treat any change
-here as unguarded, and add coverage for what you touch rather than trusting the
-suite.
+8 test files for 26 source files:
+
+- `packages/contract/tests/crypto_key.test.ts`
+- `packages/contract/tests/disposables.test.ts`
+- `packages/contract/tests/environment.test.ts`
+- `packages/contract/tests/health.test.ts`
+- `packages/contract/tests/log_sanitize.test.ts`
+- `packages/contract/tests/pagination.test.ts`
+- `packages/contract/tests/resource_derive.test.ts`
+- `packages/contract/tests/static_decorator.test.ts`
+
+2 mutation batteries — **`deno test` does not run these.** Each is an executable
+that mutates a source file and re-runs the suites that should notice. Run them
+with `deno task mutate` (all of them, one at a time) or
+`deno task mutate <name>` (one); nightly CI runs the full sweep. See
+[testing.md](../../docs/testing.md#mutation-batteries).
+
+- `packages/contract/tests/mutations/bidi_292.ts`
+- `packages/contract/tests/mutations/dsn_redaction_301_303.ts`
 
 <!-- /generated:tests -->
 
@@ -94,8 +111,11 @@ deno task deps:analyze     # cycles, declaration drift, tier policy
 deno task agents:brief     # refresh this file's generated blocks
 ```
 
-Then, specific to this package: **it has no tests.** Anything you change here is
-unguarded by the suite — add coverage for it.
+Then, specific to this package: run its 8 test files directly —
+
+```bash
+deno test -A packages/contract/
+```
 
 <!-- /generated:gate -->
 
